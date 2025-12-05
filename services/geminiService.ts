@@ -4,9 +4,9 @@ import { Transaction } from "../types";
 const apiKey = process.env.API_KEY || '';
 const ai = new GoogleGenAI({ apiKey });
 
-export const analyzePortfolio = async (transactions: Transaction[]): Promise<string> => {
+export const analyzePortfolio = async (transactions: Transaction[], portfolioName: string): Promise<string> => {
   if (!transactions || transactions.length === 0) {
-    return "No hay transacciones suficientes para realizar un análisis.";
+    return "No hay transacciones suficientes en este portafolio para realizar un análisis.";
   }
 
   // Format data for the AI to understand clearly
@@ -21,15 +21,19 @@ export const analyzePortfolio = async (transactions: Transaction[]): Promise<str
 
   const prompt = `
     Actúa como un asesor financiero experto en criptomonedas.
-    Analiza el siguiente historial de transacciones de compra/venta de USDT contra Pesos Colombianos (COP).
+    Estás analizando el portafolio: "${portfolioName}".
     
-    Datos:
+    Contexto:
+    - Si el portafolio es "Inversión Principal", enfócate en la acumulación a largo plazo, el precio promedio de entrada y la solidez de la posición.
+    - Si el portafolio es "Trading / Scalping", enfócate en la rentabilidad de las operaciones cerradas, la frecuencia y la gestión de corto plazo.
+
+    Datos del historial:
     ${historyString}
     
     Por favor provee:
-    1. Un resumen breve del rendimiento.
-    2. Identifica si la estrategia ha sido rentable basada en las ventas realizadas.
-    3. Una recomendación corta basada en los precios de compra vs venta.
+    1. Un resumen breve del rendimiento específico para este tipo de portafolio.
+    2. Identifica si la estrategia actual ha sido rentable.
+    3. Una recomendación corta y accionable.
     
     Mantén la respuesta concisa, profesional y en formato Markdown.
   `;

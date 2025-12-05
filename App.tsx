@@ -245,12 +245,19 @@ function App() {
         
         {/* Main Content: Full Width Table */}
         <div className="mb-8">
-            <HistoryTable transactions={filteredTransactions} onDelete={handleDelete} />
+            <HistoryTable 
+              transactions={filteredTransactions} 
+              onDelete={handleDelete} 
+              title={`Historial: ${activePortfolioConfig.label}`}
+            />
         </div>
       </div>
       
-      {/* AI analyzes ONLY current view */}
-      <AiInsight transactions={filteredTransactions} />
+      {/* AI analyzes ONLY current view with CONTEXT */}
+      <AiInsight 
+        transactions={filteredTransactions} 
+        portfolioName={activePortfolioConfig.label}
+      />
 
       {/* MODAL: Register Operation */}
       {isTransactionModalOpen && (

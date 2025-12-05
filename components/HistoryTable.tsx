@@ -5,9 +5,10 @@ import { Trash2 } from 'lucide-react';
 interface HistoryTableProps {
   transactions: Transaction[];
   onDelete: (id: string) => void;
+  title?: string;
 }
 
-export const HistoryTable: React.FC<HistoryTableProps> = ({ transactions, onDelete }) => {
+export const HistoryTable: React.FC<HistoryTableProps> = ({ transactions, onDelete, title = "Historial de Operaciones" }) => {
   const formatCurrency = (val: number) => {
     return new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(val);
   };
@@ -19,7 +20,7 @@ export const HistoryTable: React.FC<HistoryTableProps> = ({ transactions, onDele
   return (
     <div className="bg-gray-900 border border-gray-800 rounded-xl shadow-lg overflow-hidden">
       <div className="p-6 border-b border-gray-800">
-        <h2 className="text-xl font-semibold text-white">Historial de Operaciones</h2>
+        <h2 className="text-xl font-semibold text-white">{title}</h2>
       </div>
       <div className="overflow-x-auto">
         <table className="w-full text-left border-collapse">
@@ -38,7 +39,7 @@ export const HistoryTable: React.FC<HistoryTableProps> = ({ transactions, onDele
             {transactions.length === 0 ? (
               <tr>
                 <td colSpan={7} className="p-8 text-center text-gray-500">
-                  No hay operaciones registradas aún.
+                  No hay operaciones registradas en este portafolio aún.
                 </td>
               </tr>
             ) : (

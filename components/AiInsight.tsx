@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Bot, Loader2, Sparkles, X } from 'lucide-react';
 import { Transaction } from '../types';
 import { analyzePortfolio } from '../services/geminiService';
@@ -6,17 +6,23 @@ import ReactMarkdown from 'react-markdown';
 
 interface AiInsightProps {
   transactions: Transaction[];
+  portfolioName: string;
 }
 
-export const AiInsight: React.FC<AiInsightProps> = ({ transactions }) => {
+export const AiInsight: React.FC<AiInsightProps> = ({ transactions, portfolioName }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [analysis, setAnalysis] = useState<string | null>(null);
 
+  // Reset analysis when portfolio changes to avoid showing stale data
+  useEffect(() => {
+    setAnalysis(null);
+  }, [portfolioName, transactions]);
+
   const handleAnalyze = async () => {
     setLoading(true);
     setAnalysis(null);
-    const result = await analyzePortfolio(transactions);
+    const result = await analyzePortfolio(transactions, portfolioName);
     setAnalysis(result);
     setLoading(false);
   };
@@ -42,7 +48,10 @@ export const AiInsight: React.FC<AiInsightProps> = ({ transactions }) => {
             <div className="bg-indigo-900/50 p-2 rounded-lg">
               <Bot className="w-6 h-6 text-indigo-400" />
             </div>
-            <h2 className="text-xl font-bold text-white">Análisis Financiero Inteligente</h2>
+            <div>
+              <h2 className="text-xl font-bold text-white">Análisis Financiero Inteligente</h2>
+              <p className="text-xs text-indigo-300">Portafolio: {portfolioName}</p>
+            </div>
           </div>
           <button 
             onClick={() => setIsOpen(false)}
@@ -56,8 +65,8 @@ export const AiInsight: React.FC<AiInsightProps> = ({ transactions }) => {
           {!analysis && !loading && (
             <div className="text-center py-8">
               <p className="mb-4">
-                Utiliza el poder de Gemini para analizar tus movimientos de compra y venta. 
-                Obtén un resumen de rentabilidad y consejos.
+                Utiliza el poder de Gemini para analizar tus movimientos en <strong>{portfolioName}</strong>. 
+                Obtén un resumen de rentabilidad y consejos personalizados.
               </p>
               <button
                 onClick={handleAnalyze}
@@ -71,7 +80,7 @@ export const AiInsight: React.FC<AiInsightProps> = ({ transactions }) => {
           {loading && (
             <div className="flex flex-col items-center justify-center py-12">
               <Loader2 className="w-8 h-8 text-indigo-500 animate-spin mb-4" />
-              <p className="text-gray-400 animate-pulse">Analizando tus transacciones...</p>
+              <p className="text-gray-400 animate-pulse">Analizando transacciones de {portfolioName}...</p>
             </div>
           )}
 
